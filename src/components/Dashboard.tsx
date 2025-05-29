@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +12,7 @@ import {
   Clock,
   Plus
 } from "lucide-react";
+import { CreateEventDialog } from "./CreateEventDialog";
 
 export function Dashboard() {
   const kpiData = [
@@ -125,10 +125,7 @@ export function Dashboard() {
           <h1 className="text-3xl font-bold text-enterprise-900">Event Management Dashboard</h1>
           <p className="text-enterprise-600 mt-1">CIEC Chennai - Leadership Event Coordination</p>
         </div>
-        <Button className="bg-gradient-enterprise hover:bg-enterprise-700 text-white">
-          <Plus className="h-4 w-4 mr-2" />
-          Create New Event
-        </Button>
+        <CreateEventDialog />
       </div>
 
       {/* KPI Cards */}

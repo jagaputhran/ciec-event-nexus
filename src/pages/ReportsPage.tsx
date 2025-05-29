@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { BarChart3, Download, Calendar, Filter, TrendingUp, PieChart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ExportDialog } from "@/components/ExportDialog";
 
 const reportData = {
   monthlyBudget: [
@@ -53,10 +53,7 @@ export default function ReportsPage() {
               <SelectItem value="this-year">This Year</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
+          <ExportDialog />
         </div>
       </div>
 

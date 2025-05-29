@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calendar, Plus, Search, Filter, Clock, MapPin, Users, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CreateEventDialog } from "@/components/CreateEventDialog";
 
 const mockEvents = [
   {
@@ -72,10 +72,7 @@ export default function EventsPage() {
           <h1 className="text-3xl font-bold text-enterprise-900">Events Management</h1>
           <p className="text-enterprise-600 mt-1">Manage and track all corporate events</p>
         </div>
-        <Button className="bg-enterprise-600 hover:bg-enterprise-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Create Event
-        </Button>
+        <CreateEventDialog />
       </div>
 
       {/* Search and Filters */}

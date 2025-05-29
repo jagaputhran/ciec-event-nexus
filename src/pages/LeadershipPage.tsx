@@ -1,12 +1,12 @@
-
 import { useState } from "react";
-import { Users, Crown, Shield, Star, Plus, Search } from "lucide-react";
+import { Users, Crown, Shield, UserCheck, Calendar, DollarSign } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
+import { LeadershipAssignDialog } from "@/components/LeadershipAssignDialog";
 
 const leadershipHierarchy = [
   {
@@ -114,12 +114,9 @@ export default function LeadershipPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-enterprise-900">Leadership Hierarchy</h1>
-          <p className="text-enterprise-600 mt-1">Manage organizational structure and responsibilities</p>
+          <p className="text-enterprise-600 mt-1">Manage event responsibilities and leadership assignments</p>
         </div>
-        <Button className="bg-enterprise-600 hover:bg-enterprise-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Leader
-        </Button>
+        <LeadershipAssignDialog />
       </div>
 
       {/* Search */}
