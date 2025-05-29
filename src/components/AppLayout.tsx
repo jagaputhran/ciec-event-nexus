@@ -39,7 +39,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               
               <div className="flex items-center space-x-3 pl-4 border-l border-enterprise-200">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium text-enterprise-900">Sarah Johnson</p>
+                  <p className="text-sm font-medium text-enterprise-900">Balaji Nadar</p>
                   <p className="text-xs text-enterprise-600">VP Technology</p>
                 </div>
                 <Button variant="ghost" size="sm" className="rounded-full p-0 h-8 w-8">
