@@ -20,7 +20,18 @@ export function AppLayout({ children }: AppLayoutProps) {
           <header className="h-16 border-b bg-white shadow-sm flex items-center justify-between px-6">
             <div className="flex items-center space-x-4">
               <SidebarTrigger className="text-enterprise-600 hover:text-enterprise-900" />
-              <div className="hidden md:flex items-center space-x-3">
+              <div className="flex items-center space-x-3">
+                <img 
+                  src="/lovable-uploads/a74518e8-f616-4c58-8387-b408a2285639.png" 
+                  alt="Comcast Logo" 
+                  className="h-8 w-auto"
+                />
+                <div className="text-comcast-blue">
+                  <span className="font-bold text-lg">CIEC Chennai</span>
+                  <span className="text-sm text-comcast-gray ml-2">Technology Division</span>
+                </div>
+              </div>
+              <div className="hidden md:flex items-center space-x-3 ml-6">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-enterprise-400 h-4 w-4" />
                   <Input 
