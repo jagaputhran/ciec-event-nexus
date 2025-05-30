@@ -12,6 +12,7 @@ import { Calendar as CalendarIcon, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { useEvents } from "@/contexts/EventContext";
 
 interface CreateEventDialogProps {
   trigger?: React.ReactNode;
@@ -19,6 +20,7 @@ interface CreateEventDialogProps {
 }
 
 export function CreateEventDialog({ trigger, onEventCreated }: CreateEventDialogProps) {
+  const { addEvent } = useEvents();
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date>();
   const [formData, setFormData] = useState({
@@ -34,13 +36,43 @@ export function CreateEventDialog({ trigger, onEventCreated }: CreateEventDialog
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Creating event:", { ...formData, date });
+    
+    if (!formData.title || !date) {
+      toast({
+        title: "Error",
+        description: "Please fill in required fields (title and date)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Create the event object
+    const newEvent = {
+      title: formData.title,
+      description: formData.description,
+      location: formData.location || "TBD",
+      attendees: parseInt(formData.attendees) || 0,
+      budget: parseInt(formData.budget) || 0,
+      date: format(date, "yyyy-MM-dd"),
+      time: "09:00 AM", // Default time
+      status: "planning",
+      planner: "Internal Team",
+      type: formData.type || "meeting",
+      priority: formData.priority || "medium",
+      leader: formData.leader || "TBD"
+    };
+
+    // Add event to context
+    addEvent(newEvent);
+    
+    console.log("Event created:", newEvent);
     
     toast({
       title: "Event Created Successfully",
-      description: `${formData.title} has been scheduled for ${date ? format(date, "PPP") : "TBD"}`,
+      description: `${formData.title} has been scheduled for ${format(date, "PPP")}`,
     });
     
+    // Reset form
     setOpen(false);
     setFormData({
       title: "",
@@ -76,7 +108,7 @@ export function CreateEventDialog({ trigger, onEventCreated }: CreateEventDialog
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="title">Event Title</Label>
+              <Label htmlFor="title">Event Title *</Label>
               <Input
                 id="title"
                 value={formData.title}
@@ -115,7 +147,7 @@ export function CreateEventDialog({ trigger, onEventCreated }: CreateEventDialog
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Event Date</Label>
+              <Label>Event Date *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -194,10 +226,10 @@ export function CreateEventDialog({ trigger, onEventCreated }: CreateEventDialog
                 <SelectValue placeholder="Select responsible leader" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="balaji-nadar">Balaji Nadar (VP Technology)</SelectItem>
-                <SelectItem value="ravi-krishnan">Ravi Krishnan (Director Engineering)</SelectItem>
-                <SelectItem value="priya-sharma">Priya Sharma (Senior Manager Operations)</SelectItem>
-                <SelectItem value="amit-patel">Amit Patel (Manager R&D)</SelectItem>
+                <SelectItem value="illan">ILLAN (VP)</SelectItem>
+                <SelectItem value="ganesh">Ganesh (Senior Director)</SelectItem>
+                <SelectItem value="narotom">Narotom (VP)</SelectItem>
+                <SelectItem value="harish">Harish (Manager)</SelectItem>
               </SelectContent>
             </Select>
           </div>

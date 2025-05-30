@@ -25,62 +25,62 @@ const leadershipHierarchy = [
   },
   {
     id: 2,
-    name: "Ravi Krishnan",
-    role: "Director Engineering",
-    level: "Director",
-    department: "Engineering",
-    email: "ravi.krishnan@comcast.com",
+    name: "ILLAN",
+    role: "VP Operations",
+    level: "VP",
+    department: "Operations",
+    email: "illan@comcast.com",
     phone: "+91 98765 43215",
     eventsAssigned: 5,
-    budgetResponsibility: 800000,
+    budgetResponsibility: 1800000,
     directReports: 4,
     reportsTo: 1
   },
   {
     id: 3,
-    name: "Meera Patel",
-    role: "Director Operations",
-    level: "Director",
-    department: "Operations",
-    email: "meera.patel@comcast.com",
+    name: "Ganesh",
+    role: "Senior Director Engineering",
+    level: "Senior Director",
+    department: "Engineering",
+    email: "ganesh@comcast.com",
     phone: "+91 98765 43216",
     eventsAssigned: 6,
-    budgetResponsibility: 600000,
-    directReports: 3,
+    budgetResponsibility: 1200000,
+    directReports: 5,
     reportsTo: 1
   },
   {
     id: 4,
-    name: "Arjun Singh",
-    role: "Senior Manager",
-    level: "Senior Manager",
-    department: "Engineering",
-    email: "arjun.singh@comcast.com",
+    name: "Narotom",
+    role: "VP Strategy",
+    level: "VP",
+    department: "Strategy",
+    email: "narotom@comcast.com",
     phone: "+91 98765 43217",
-    eventsAssigned: 3,
-    budgetResponsibility: 300000,
-    directReports: 5,
-    reportsTo: 2
+    eventsAssigned: 4,
+    budgetResponsibility: 1500000,
+    directReports: 3,
+    reportsTo: 1
   },
   {
     id: 5,
-    name: "Kavitha Reddy",
+    name: "Harish",
     role: "Manager Events",
     level: "Manager",
     department: "Operations",
-    email: "kavitha.reddy@comcast.com",
+    email: "harish@comcast.com",
     phone: "+91 98765 43218",
     eventsAssigned: 12,
-    budgetResponsibility: 400000,
+    budgetResponsibility: 500000,
     directReports: 2,
-    reportsTo: 3
+    reportsTo: 2
   }
 ];
 
 const upcomingEvents = [
   { id: 1, name: "Q4 Review", leader: "Balaji Nadar", date: "2024-06-15" },
-  { id: 2, name: "Tech Summit", leader: "Ravi Krishnan", date: "2024-06-20" },
-  { id: 3, name: "Operations Meeting", leader: "Meera Patel", date: "2024-06-25" }
+  { id: 2, name: "Tech Summit", leader: "ILLAN", date: "2024-06-20" },
+  { id: 3, name: "Operations Meeting", leader: "Ganesh", date: "2024-06-25" }
 ];
 
 export default function LeadershipPage() {
@@ -89,6 +89,7 @@ export default function LeadershipPage() {
   const getLevelIcon = (level: string) => {
     switch (level) {
       case "VP": return <Crown className="h-5 w-5 text-yellow-600" />;
+      case "Senior Director": return <Shield className="h-5 w-5 text-blue-600" />;
       case "Director": return <Shield className="h-5 w-5 text-blue-600" />;
       case "Senior Manager": return <Star className="h-5 w-5 text-green-600" />;
       default: return <Users className="h-5 w-5 text-gray-600" />;
@@ -98,6 +99,7 @@ export default function LeadershipPage() {
   const getLevelColor = (level: string) => {
     switch (level) {
       case "VP": return "bg-yellow-100 text-yellow-800";
+      case "Senior Director": return "bg-blue-100 text-blue-800";
       case "Director": return "bg-blue-100 text-blue-800";
       case "Senior Manager": return "bg-green-100 text-green-800";
       default: return "bg-gray-100 text-gray-800";
