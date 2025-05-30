@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { DollarSign, Plus, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { BudgetAllocationDialog } from "@/components/BudgetAllocationDialog";
 
 const budgetData = [
