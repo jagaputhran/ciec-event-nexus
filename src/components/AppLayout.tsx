@@ -27,8 +27,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                   className="h-8 w-auto"
                 />
                 <div className="text-comcast-blue">
-                  <span className="font-bold text-lg">CIEC Chennai</span>
-                  <span className="text-sm text-comcast-gray ml-2">Technology Division</span>
+                  <span className="font-bold text-lg">CIEC</span>
+                  <span className="text-sm text-comcast-gray ml-2">Event Management</span>
                 </div>
               </div>
               <div className="hidden md:flex items-center space-x-3 ml-6">
