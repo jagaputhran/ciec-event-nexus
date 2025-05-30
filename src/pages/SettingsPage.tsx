@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Settings, User, Bell, Shield, Palette, Globe, Save, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,59 +56,90 @@ export default function SettingsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center space-x-4">
-        <div className="h-12 w-12 bg-comcast-blue rounded-lg flex items-center justify-center">
-          <Building2 className="h-6 w-6 text-white" />
+      {/* Header with Comcast Logo */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="h-16 w-16 bg-white rounded-lg flex items-center justify-center shadow-sm border">
+            <svg viewBox="0 0 200 50" className="h-10 w-auto">
+              <defs>
+                <linearGradient id="comcastGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#003366" />
+                  <stop offset="100%" stopColor="#0066cc" />
+                </linearGradient>
+              </defs>
+              <text x="10" y="35" fill="url(#comcastGradient)" fontSize="24" fontWeight="bold" fontFamily="Arial, sans-serif">
+                comcast
+              </text>
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-comcast-blue">Settings</h1>
+            <p className="text-comcast-gray mt-1">Manage your account preferences and system settings</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-bold text-comcast-blue">Settings</h1>
-          <p className="text-gray-600 mt-1">Manage your account preferences and system settings</p>
+        <div className="text-right">
+          <p className="text-sm text-comcast-gray">CIEC Chennai</p>
+          <p className="font-semibold text-comcast-blue">Technology Division</p>
         </div>
       </div>
 
       {/* Comcast Branding Banner */}
-      <Card className="bg-gradient-to-r from-comcast-blue to-comcast-lightBlue text-white">
-        <CardContent className="p-6">
+      <Card className="bg-gradient-to-r from-comcast-blue to-comcast-lightBlue text-white border-0 shadow-lg">
+        <CardContent className="p-8">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">Comcast CIEC Chennai</h2>
-              <p className="text-blue-100 mt-1">Event Management System</p>
+            <div className="flex items-center space-x-6">
+              <div className="h-16 w-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <Building2 className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold">Comcast CIEC Chennai</h2>
+                <p className="text-blue-100 mt-2 text-lg">Event Management System</p>
+                <div className="flex items-center space-x-4 mt-3">
+                  <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">Enterprise Solutions</span>
+                  <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">Global Technology</span>
+                </div>
+              </div>
             </div>
             <div className="text-right">
+              <div className="h-12 w-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mb-3">
+                <Settings className="h-6 w-6 text-white" />
+              </div>
               <p className="text-sm text-blue-100">Connected Organization</p>
-              <p className="font-semibold">Technology Division</p>
+              <p className="font-semibold text-lg">Technology Division</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="profile" className="flex items-center space-x-2">
+        <TabsList className="grid w-full grid-cols-4 bg-comcast-lightGray">
+          <TabsTrigger value="profile" className="flex items-center space-x-2 data-[state=active]:bg-comcast-blue data-[state=active]:text-white">
             <User className="h-4 w-4" />
             <span>Profile</span>
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center space-x-2">
+          <TabsTrigger value="notifications" className="flex items-center space-x-2 data-[state=active]:bg-comcast-blue data-[state=active]:text-white">
             <Bell className="h-4 w-4" />
             <span>Notifications</span>
           </TabsTrigger>
-          <TabsTrigger value="preferences" className="flex items-center space-x-2">
+          <TabsTrigger value="preferences" className="flex items-center space-x-2 data-[state=active]:bg-comcast-blue data-[state=active]:text-white">
             <Palette className="h-4 w-4" />
             <span>Preferences</span>
           </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center space-x-2">
+          <TabsTrigger value="security" className="flex items-center space-x-2 data-[state=active]:bg-comcast-blue data-[state=active]:text-white">
             <Shield className="h-4 w-4" />
             <span>Security</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-comcast-blue">Profile Information</CardTitle>
+          <Card className="border-comcast-lightBlue/20">
+            <CardHeader className="bg-gradient-to-r from-comcast-lightGray to-white">
+              <CardTitle className="text-comcast-blue flex items-center space-x-2">
+                <User className="h-5 w-5" />
+                <span>Profile Information</span>
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="name">Full Name</Label>
@@ -162,7 +192,7 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={handleSaveProfile} className="bg-comcast-blue hover:bg-comcast-blue/90">
+              <Button onClick={handleSaveProfile} className="bg-comcast-blue hover:bg-comcast-blue/90 text-white">
                 <Save className="h-4 w-4 mr-2" />
                 Save Profile
               </Button>
@@ -171,11 +201,14 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-comcast-blue">Notification Preferences</CardTitle>
+          <Card className="border-comcast-lightBlue/20">
+            <CardHeader className="bg-gradient-to-r from-comcast-lightGray to-white">
+              <CardTitle className="text-comcast-blue flex items-center space-x-2">
+                <Bell className="h-5 w-5" />
+                <span>Notification Preferences</span>
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="email-alerts">Email Alerts</Label>
@@ -223,7 +256,7 @@ export default function SettingsPage() {
                   onCheckedChange={(checked) => setNotifications({ ...notifications, budgetAlerts: checked })}
                 />
               </div>
-              <Button onClick={handleSaveNotifications} className="bg-comcast-blue hover:bg-comcast-blue/90">
+              <Button onClick={handleSaveNotifications} className="bg-comcast-blue hover:bg-comcast-blue/90 text-white">
                 <Save className="h-4 w-4 mr-2" />
                 Save Notifications
               </Button>
@@ -232,11 +265,14 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="preferences" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-comcast-blue">System Preferences</CardTitle>
+          <Card className="border-comcast-lightBlue/20">
+            <CardHeader className="bg-gradient-to-r from-comcast-lightGray to-white">
+              <CardTitle className="text-comcast-blue flex items-center space-x-2">
+                <Palette className="h-5 w-5" />
+                <span>System Preferences</span>
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="theme">Theme</Label>
@@ -293,7 +329,7 @@ export default function SettingsPage() {
                   </Select>
                 </div>
               </div>
-              <Button onClick={handleSavePreferences} className="bg-comcast-blue hover:bg-comcast-blue/90">
+              <Button onClick={handleSavePreferences} className="bg-comcast-blue hover:bg-comcast-blue/90 text-white">
                 <Save className="h-4 w-4 mr-2" />
                 Save Preferences
               </Button>
@@ -302,11 +338,14 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="security" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-comcast-blue">Security Settings</CardTitle>
+          <Card className="border-comcast-lightBlue/20">
+            <CardHeader className="bg-gradient-to-r from-comcast-lightGray to-white">
+              <CardTitle className="text-comcast-blue flex items-center space-x-2">
+                <Shield className="h-5 w-5" />
+                <span>Security Settings</span>
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-6">
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="current-password">Current Password</Label>
@@ -321,17 +360,17 @@ export default function SettingsPage() {
                   <Input id="confirm-password" type="password" placeholder="Confirm new password" />
                 </div>
               </div>
-              <Button className="bg-comcast-blue hover:bg-comcast-blue/90">
+              <Button className="bg-comcast-blue hover:bg-comcast-blue/90 text-white">
                 <Shield className="h-4 w-4 mr-2" />
                 Update Password
               </Button>
-              <Separator />
+              <Separator className="border-comcast-lightBlue/30" />
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-comcast-blue">Two-Factor Authentication</h3>
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Enable 2FA</Label>
-                    <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
+                    <p className="text-sm text-comcast-gray">Add an extra layer of security to your account</p>
                   </div>
                   <Switch />
                 </div>
@@ -340,6 +379,22 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Comcast Footer Branding */}
+      <Card className="bg-comcast-lightGray border-comcast-lightBlue/20">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center space-x-4">
+              <span className="text-comcast-blue font-semibold">© 2024 Comcast Corporation</span>
+              <span className="text-comcast-gray">All rights reserved</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-comcast-gray">Powered by</span>
+              <span className="text-comcast-blue font-semibold">Comcast Technology</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -77,10 +76,20 @@ export default {
 					950: '#082f49'
 				},
 				comcast: {
-					blue: '#003366',
-					lightBlue: '#0066cc',
-					gray: '#666666',
-					lightGray: '#f5f5f5'
+					blue: '#003366',        // Primary Comcast Blue (Dark Navy)
+					lightBlue: '#0066cc',   // Secondary Comcast Blue (Bright Blue)
+					navy: '#002244',        // Deep Navy
+					brightBlue: '#007ACC',  // Bright Blue for accents
+					gray: '#666666',        // Medium Gray
+					lightGray: '#f5f5f5',  // Light Gray for backgrounds
+					darkGray: '#333333',    // Dark Gray for text
+					white: '#ffffff',       // Pure White
+					silver: '#e6e6e6',      // Silver/Light Gray
+					// Accent colors from Comcast palette
+					orange: '#ff6600',      // Comcast Orange (for highlights)
+					green: '#00cc66',       // Success Green
+					red: '#cc0000',         // Error Red
+					yellow: '#ffcc00',      // Warning Yellow
 				}
 			},
 			borderRadius: {
