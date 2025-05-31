@@ -71,9 +71,11 @@ export function AppSidebar() {
       <SidebarHeader className="p-6">
         {!isCollapsed && (
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-enterprise rounded-lg flex items-center justify-center">
-              <Building2 className="h-6 w-6 text-white" />
-            </div>
+            <img 
+              src="/lovable-uploads/a74518e8-f616-4c58-8387-b408a2285639.png" 
+              alt="Comcast Logo" 
+              className="h-10 w-auto"
+            />
             <div>
               <h2 className="text-lg font-bold text-enterprise-900">CIEC</h2>
               <p className="text-sm text-enterprise-600">Event Management</p>
@@ -81,9 +83,11 @@ export function AppSidebar() {
           </div>
         )}
         {isCollapsed && (
-          <div className="w-10 h-10 bg-gradient-enterprise rounded-lg flex items-center justify-center mx-auto">
-            <Building2 className="h-6 w-6 text-white" />
-          </div>
+          <img 
+            src="/lovable-uploads/a74518e8-f616-4c58-8387-b408a2285639.png" 
+            alt="Comcast Logo" 
+            className="h-8 w-auto mx-auto"
+          />
         )}
       </SidebarHeader>
 
