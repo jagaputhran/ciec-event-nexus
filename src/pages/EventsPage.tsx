@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateEventDialog } from "@/components/CreateEventDialog";
+import { EventDetailsDialog } from "@/components/EventDetailsDialog";
 import { useEvents } from "@/contexts/EventContext";
 
 export default function EventsPage() {
@@ -88,7 +89,7 @@ export default function EventsPage() {
                           {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
                         </Badge>
                       </div>
-                      <Button variant="outline" size="sm">View Details</Button>
+                      <EventDetailsDialog event={event} />
                     </div>
                   </CardHeader>
                   <CardContent>
