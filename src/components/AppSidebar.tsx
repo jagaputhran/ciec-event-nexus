@@ -50,7 +50,7 @@ const navigationItems = [
     icon: Building2,
   },
   {
-    title: "Reports",
+    title: "Analytics",
     url: "/reports",
     icon: BarChart3,
   },
