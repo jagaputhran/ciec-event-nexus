@@ -1,3 +1,4 @@
+
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { Button } from "@/components/ui/button";
@@ -19,10 +20,6 @@ export function AppLayout({ children }: AppLayoutProps) {
           <header className="h-16 border-b bg-white shadow-sm flex items-center justify-between px-6">
             <div className="flex items-center space-x-4">
               <SidebarTrigger className="text-enterprise-600 hover:text-enterprise-900" />
-              <div className="text-comcast-blue">
-                <span className="font-bold text-lg">CIEC</span>
-                <span className="text-sm text-comcast-gray ml-2">Event Management</span>
-              </div>
               <div className="hidden md:flex items-center space-x-3 ml-6">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-enterprise-400 h-4 w-4" />
