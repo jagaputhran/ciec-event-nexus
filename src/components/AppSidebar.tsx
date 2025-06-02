@@ -7,7 +7,8 @@ import {
   FileText, 
   Settings,
   Building2,
-  BarChart3
+  BarChart3,
+  ClipboardList
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -33,6 +34,11 @@ const navigationItems = [
     title: "Events",
     url: "/events",
     icon: Calendar,
+  },
+  {
+    title: "Intake Form",
+    url: "/intake-form",
+    icon: ClipboardList,
   },
   {
     title: "Budget Management",

@@ -14,6 +14,7 @@ import PlannersPage from "./pages/PlannersPage";
 import LeadershipPage from "./pages/LeadershipPage";
 import ReportsPage from "./pages/ReportsPage";
 import SettingsPage from "./pages/SettingsPage";
+import IntakeFormPage from "./pages/IntakeFormPage";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="/leadership" element={<LeadershipPage />} />
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/intake-form" element={<IntakeFormPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>
