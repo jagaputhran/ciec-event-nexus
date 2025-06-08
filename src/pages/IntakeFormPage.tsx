@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { CalendarIcon, ClipboardList, Send, User, Building2, Mail, Calendar, MapPin, DollarSign, Users, CheckCircle2, Download, FileText, MessageSquare, Phone, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import SSOLoginForm from "@/components/SSOLoginForm";
 
 interface EventRequestForm {
   requesterName: string;
@@ -30,6 +31,7 @@ interface EventRequestForm {
 }
 
 export default function IntakeFormPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedData, setSubmittedData] = useState<EventRequestForm | null>(null);
@@ -177,6 +179,15 @@ Attendees: ${submittedData.headCount}
       setIsSubmitting(false);
     }
   };
+
+  const handleAuthentication = () => {
+    setIsAuthenticated(true);
+  };
+
+  // Show SSO login if not authenticated
+  if (!isAuthenticated) {
+    return <SSOLoginForm onAuthenticated={handleAuthentication} />;
+  }
 
   if (isSubmitted && submittedData) {
     return (
