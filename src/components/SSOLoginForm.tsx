@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Shield, Building2, Mail, Lock, Eye, EyeOff, Chrome, Briefcase } from "lucide-react";
+import { Shield, Mail, Lock, Eye, EyeOff, Chrome, Briefcase } from "lucide-react";
 
 interface SSOLoginFormProps {
   onAuthenticated: () => void;
@@ -63,7 +63,11 @@ export default function SSOLoginForm({ onAuthenticated }: SSOLoginFormProps) {
         <Card className="bg-white/95 backdrop-blur-lg border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 animate-scale-in">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-2xl font-bold text-comcast-blue flex items-center justify-center space-x-3">
-              <Building2 className="h-7 w-7" />
+              <img 
+                src="/lovable-uploads/a74518e8-f616-4c58-8387-b408a2285639.png" 
+                alt="Comcast Logo" 
+                className="h-8 w-auto"
+              />
               <span>CIEC Portal</span>
             </CardTitle>
           </CardHeader>
