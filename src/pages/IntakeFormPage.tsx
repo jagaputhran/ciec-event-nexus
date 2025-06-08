@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { CalendarIcon, ClipboardList, Send, User, Building2, Mail, Calendar, MapPin, DollarSign, Users, CheckCircle2 } from "lucide-react";
+import { CalendarIcon, ClipboardList, Send, User, Building2, Mail, Calendar, MapPin, DollarSign, Users, CheckCircle2, Download, FileText, MessageSquare, Phone, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface EventRequestForm {
@@ -33,6 +32,7 @@ interface EventRequestForm {
 export default function IntakeFormPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedData, setSubmittedData] = useState<EventRequestForm | null>(null);
   const { toast } = useToast();
   
   const form = useForm<EventRequestForm>({
@@ -57,77 +57,120 @@ export default function IntakeFormPage() {
   });
 
   const sendEmail = async (data: EventRequestForm) => {
-    // Simulate email sending - In a real app, you'd use a service like EmailJS or backend API
     const emailContent = `
-New Event Request Submitted
+New Event Request Submitted - ${data.eventName}
 
-Event Details:
-- Event Name: ${data.eventName}
-- Date: ${data.eventDate}
-- Time: ${data.preferredTime}
-- Venue: ${data.venuePreferred}
-- Budget: ₹${data.tentativeBudget}
-- Expected Attendees: ${data.headCount}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Requester Information:
-- Name: ${data.requesterName}
-- Team: ${data.requesterTeam}
-- Email: ${data.requesterEmail}
-- Employee ID: ${data.requesterEmployeeId}
+EVENT DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 Event Name: ${data.eventName}
+📅 Date: ${data.eventDate}
+🕒 Time: ${data.preferredTime}
+📍 Venue: ${data.venuePreferred}
+💰 Budget: ₹${data.tentativeBudget}
+👥 Expected Attendees: ${data.headCount}
 
-Event Description:
+REQUESTER INFORMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👤 Name: ${data.requesterName}
+🏢 Team: ${data.requesterTeam}
+📧 Email: ${data.requesterEmail}
+🆔 Employee ID: ${data.requesterEmployeeId}
+
+EVENT DESCRIPTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${data.eventDescription}
 
-Business Impact:
+BUSINESS IMPACT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${data.businessImpact}
 
-Employee Takeaway:
+EMPLOYEE TAKEAWAY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${data.employeeTakeaway}
 
-Leadership Approval: ${data.leaderApproval}
+APPROVAL STATUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Leadership Approval: ${data.leaderApproval === 'yes' ? '✅ Approved' : '❌ Pending'}
 Approver: ${data.approverName}
 
-Special Arrangements:
-${data.specialArrangements || 'None'}
+SPECIAL ARRANGEMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.specialArrangements || 'None specified'}
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Submitted on: ${new Date().toLocaleString()}
+Request ID: REQ-${Date.now()}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     `;
 
     console.log("Email would be sent with content:", emailContent);
+  };
+
+  const downloadPDF = () => {
+    if (!submittedData) return;
     
-    // Here you would integrate with an actual email service
-    // For example, using EmailJS:
-    // await emailjs.send('service_id', 'template_id', {
-    //   to_email: 'events@ciec.com',
-    //   from_email: data.requesterEmail,
-    //   subject: `New Event Request: ${data.eventName}`,
-    //   message: emailContent
-    // });
+    const content = `
+Event Request Summary
+====================
+
+Event: ${submittedData.eventName}
+Date: ${submittedData.eventDate}
+Requester: ${submittedData.requesterName}
+Team: ${submittedData.requesterTeam}
+Budget: ₹${submittedData.tentativeBudget}
+Attendees: ${submittedData.headCount}
+    `;
+    
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Event_Request_${submittedData.eventName.replace(/\s+/g, '_')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Download Started",
+      description: "Your event request summary is being downloaded.",
+    });
+  };
+
+  const copyToClipboard = () => {
+    if (!submittedData) return;
+    
+    const summary = `Event: ${submittedData.eventName} | Date: ${submittedData.eventDate} | Requester: ${submittedData.requesterName}`;
+    navigator.clipboard.writeText(summary);
+    
+    toast({
+      title: "Copied to Clipboard",
+      description: "Event summary copied successfully.",
+    });
   };
 
   const onSubmit = async (data: EventRequestForm) => {
     setIsSubmitting(true);
     
     try {
-      // Send email notification
       await sendEmail(data);
-      
-      // Simulate form submission delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       console.log("Event Request Form Data:", data);
-      
+      setSubmittedData(data);
       setIsSubmitted(true);
       
       toast({
-        title: "Event Request Submitted Successfully!",
-        description: "Your event request has been submitted and email notifications have been sent.",
+        title: "🎉 Event Request Submitted!",
+        description: "Your request has been sent and notifications dispatched.",
       });
       
     } catch (error) {
       toast({
-        title: "Submission Failed",
-        description: "There was an error submitting your request. Please try again.",
+        title: "❌ Submission Failed",
+        description: "Please try again or contact support.",
         variant: "destructive",
       });
     } finally {
@@ -135,34 +178,168 @@ Submitted on: ${new Date().toLocaleString()}
     }
   };
 
-  if (isSubmitted) {
+  if (isSubmitted && submittedData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 p-6">
-        <div className="max-w-4xl mx-auto flex items-center justify-center min-h-screen">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-6">
+        <div className="max-w-6xl mx-auto space-y-8">
+          {/* Success Header */}
           <div className="text-center space-y-6 animate-fade-in">
-            <div className="animate-scale-in">
-              <CheckCircle2 className="h-24 w-24 text-green-500 mx-auto mb-6" />
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full opacity-20 animate-pulse"></div>
+              <CheckCircle2 className="h-32 w-32 text-green-500 mx-auto relative z-10 animate-bounce-gentle" />
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Request Submitted!</h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Your event request has been successfully submitted and email notifications have been sent to the relevant teams.
-            </p>
-            <div className="bg-white p-6 rounded-2xl shadow-lg border border-green-100">
-              <h2 className="text-lg font-semibold text-gray-800 mb-3">What happens next?</h2>
-              <ul className="text-left text-gray-600 space-y-2">
-                <li>• Your request will be reviewed by the CIEC events team</li>
-                <li>• You'll receive an approval/rejection email within 5 business days</li>
-                <li>• If approved, further coordination details will be shared</li>
-              </ul>
+            <div className="space-y-4">
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent animate-scale-in">
+                Request Submitted Successfully! 🎉
+              </h1>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Your event request for <span className="font-semibold text-emerald-600">"{submittedData.eventName}"</span> has been successfully submitted and email notifications have been sent to the relevant teams.
+              </p>
             </div>
+          </div>
+
+          {/* Event Summary Card */}
+          <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-lg hover:shadow-3xl transition-all duration-500 animate-slide-in-right">
+            <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-t-lg">
+              <CardTitle className="text-2xl font-bold flex items-center space-x-3">
+                <FileText className="h-7 w-7" />
+                <span>Event Request Summary</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-3 p-4 bg-gray-50 rounded-xl">
+                  <h3 className="font-semibold text-gray-700 flex items-center">
+                    <Calendar className="h-5 w-5 mr-2 text-emerald-500" />
+                    Event Details
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <p><span className="font-medium">Name:</span> {submittedData.eventName}</p>
+                    <p><span className="font-medium">Date:</span> {submittedData.eventDate}</p>
+                    <p><span className="font-medium">Time:</span> {submittedData.preferredTime}</p>
+                    <p><span className="font-medium">Venue:</span> {submittedData.venuePreferred}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 p-4 bg-blue-50 rounded-xl">
+                  <h3 className="font-semibold text-gray-700 flex items-center">
+                    <User className="h-5 w-5 mr-2 text-blue-500" />
+                    Requester Info
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <p><span className="font-medium">Name:</span> {submittedData.requesterName}</p>
+                    <p><span className="font-medium">Team:</span> {submittedData.requesterTeam}</p>
+                    <p><span className="font-medium">Email:</span> {submittedData.requesterEmail}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 p-4 bg-purple-50 rounded-xl">
+                  <h3 className="font-semibold text-gray-700 flex items-center">
+                    <DollarSign className="h-5 w-5 mr-2 text-purple-500" />
+                    Budget & Logistics
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <p><span className="font-medium">Budget:</span> ₹{submittedData.tentativeBudget}</p>
+                    <p><span className="font-medium">Attendees:</span> {submittedData.headCount}</p>
+                    <p><span className="font-medium">Approval:</span> {submittedData.leaderApproval === 'yes' ? '✅ Yes' : '❌ Pending'}</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Options */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in">
+            <Button 
+              onClick={downloadPDF}
+              className="h-16 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            >
+              <Download className="h-6 w-6 mr-3" />
+              Download Summary
+            </Button>
+
+            <Button 
+              onClick={copyToClipboard}
+              variant="outline"
+              className="h-16 border-2 border-gray-300 hover:border-gray-400 font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            >
+              <Copy className="h-6 w-6 mr-3" />
+              Copy Details
+            </Button>
+
+            <Button 
+              onClick={() => window.open('mailto:events@ciec.com', '_blank')}
+              variant="outline"
+              className="h-16 border-2 border-green-300 hover:border-green-400 text-green-700 font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            >
+              <Mail className="h-6 w-6 mr-3" />
+              Contact Support
+            </Button>
+
+            <Button 
+              onClick={() => window.open('tel:+1234567890', '_blank')}
+              variant="outline"
+              className="h-16 border-2 border-purple-300 hover:border-purple-400 text-purple-700 font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            >
+              <Phone className="h-6 w-6 mr-3" />
+              Call Support
+            </Button>
+          </div>
+
+          {/* Next Steps */}
+          <Card className="shadow-xl border-0 bg-gradient-to-r from-indigo-50 to-purple-50 animate-fade-in">
+            <CardContent className="p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <MessageSquare className="h-7 w-7 mr-3 text-indigo-600" />
+                What happens next?
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-indigo-600 font-bold text-lg">1</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-2">Review Process</h3>
+                  <p className="text-gray-600 text-sm">Your request will be reviewed by the CIEC events team within 2-3 business days</p>
+                </div>
+                
+                <div className="text-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-green-600 font-bold text-lg">2</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-2">Approval Decision</h3>
+                  <p className="text-gray-600 text-sm">You'll receive an approval/rejection email within 5 business days</p>
+                </div>
+                
+                <div className="text-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-purple-600 font-bold text-lg">3</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-2">Event Coordination</h3>
+                  <p className="text-gray-600 text-sm">If approved, detailed coordination and planning will begin immediately</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center animate-fade-in">
             <Button 
               onClick={() => {
                 setIsSubmitted(false);
+                setSubmittedData(null);
                 form.reset();
               }}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              className="w-full md:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
             >
               Submit Another Request
+            </Button>
+            
+            <Button 
+              onClick={() => window.location.href = '/'}
+              variant="outline"
+              className="w-full md:w-auto border-2 border-gray-300 hover:border-gray-400 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            >
+              Return to Dashboard
             </Button>
           </div>
         </div>
@@ -171,63 +348,82 @@ Submitted on: ${new Date().toLocaleString()}
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6">
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Enhanced Header with Animation */}
-        <div className="text-center space-y-6 animate-fade-in">
-          <div className="inline-flex items-center justify-center space-x-4 bg-white p-6 rounded-2xl shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl animate-pulse">
-              <ClipboardList className="h-8 w-8 text-white" />
-            </div>
-            <div className="text-left">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-                Event Request Form
-              </h1>
-              <p className="text-lg text-gray-600">Submit your event proposal for approval</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
+      <div className="max-w-7xl mx-auto space-y-10">
+        {/* Enhanced Header */}
+        <div className="text-center space-y-8 animate-fade-in">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-600 rounded-3xl opacity-10 transform rotate-1"></div>
+            <div className="relative bg-white p-8 rounded-3xl shadow-2xl border border-blue-100 hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02]">
+              <div className="flex items-center justify-center space-x-6">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl opacity-20 animate-pulse"></div>
+                  <div className="relative p-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl">
+                    <ClipboardList className="h-12 w-12 text-white" />
+                  </div>
+                </div>
+                <div className="text-left">
+                  <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
+                    Event Request Portal
+                  </h1>
+                  <p className="text-xl text-gray-600 font-medium">Transform your ideas into extraordinary events</p>
+                </div>
+              </div>
             </div>
           </div>
           
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 animate-slide-in-right">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-xl font-semibold mb-3 flex items-center">
-                <Mail className="h-5 w-5 mr-2" />
-                Important Guidelines
+          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 animate-slide-in-right">
+            <div className="max-w-5xl mx-auto">
+              <h2 className="text-2xl font-bold mb-4 flex items-center justify-center">
+                <Mail className="h-7 w-7 mr-3" />
+                Comprehensive Event Planning Guidelines
               </h2>
-              <p className="text-blue-100 leading-relaxed">
-                This form ensures smooth coordination and effective planning for upcoming events at CIEC. 
-                Please submit your request at least one month before the event date. All submissions 
-                are subject to approval based on timelines, budget constraints, and organizational priorities.
-                <span className="block mt-2 font-semibold">📧 Email notifications will be sent upon submission.</span>
-              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-blue-100">
+                <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur-sm">
+                  <Calendar className="h-8 w-8 mx-auto mb-3" />
+                  <p className="font-semibold">Submit 1 month in advance</p>
+                </div>
+                <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur-sm">
+                  <CheckCircle2 className="h-8 w-8 mx-auto mb-3" />
+                  <p className="font-semibold">Leadership approval required</p>
+                </div>
+                <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur-sm">
+                  <Send className="h-8 w-8 mx-auto mb-3" />
+                  <p className="font-semibold">Instant email notifications</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
             {/* Requester Information Section */}
-            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300 animate-fade-in">
-              <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-t-lg">
-                <CardTitle className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
-                  <div className="p-2 bg-blue-500 rounded-lg animate-bounce">
-                    <User className="h-6 w-6 text-white" />
+            <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-lg hover:shadow-3xl transition-all duration-500 animate-fade-in">
+              <CardHeader className="bg-gradient-to-r from-slate-600 to-gray-700 text-white rounded-t-xl">
+                <CardTitle className="text-3xl font-bold flex items-center space-x-4">
+                  <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <User className="h-8 w-8" />
                   </div>
-                  <span>Requester Information</span>
+                  <span>Personal Information</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <CardContent className="p-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <FormField
                     control={form.control}
                     name="requesterName"
                     rules={{ required: "Requester name is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Full Name *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
+                          <User className="h-5 w-5 mr-2 text-blue-500" />
+                          Full Name *
+                        </FormLabel>
                         <FormControl>
                           <div className="relative group">
-                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                            <Input className="pl-12 h-12 border-2 border-gray-200 focus:border-blue-500 rounded-xl hover:border-gray-300 transition-all duration-200" placeholder="Enter your full name" {...field} />
+                            <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 group-focus-within:text-blue-500 transition-all duration-300" />
+                            <Input className="pl-14 h-14 border-2 border-gray-200 focus:border-blue-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Enter your full name" {...field} />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -241,11 +437,14 @@ Submitted on: ${new Date().toLocaleString()}
                     rules={{ required: "Team information is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Team / Business Unit *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
+                          <Building2 className="h-5 w-5 mr-2 text-blue-500" />
+                          Team / Business Unit *
+                        </FormLabel>
                         <FormControl>
                           <div className="relative group">
-                            <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                            <Input className="pl-12 h-12 border-2 border-gray-200 focus:border-blue-500 rounded-xl hover:border-gray-300 transition-all duration-200" placeholder="Enter your team/business unit" {...field} />
+                            <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 group-focus-within:text-blue-500 transition-all duration-300" />
+                            <Input className="pl-14 h-14 border-2 border-gray-200 focus:border-blue-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Enter your team/business unit" {...field} />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -265,11 +464,14 @@ Submitted on: ${new Date().toLocaleString()}
                     }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Email Address *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
+                          <Mail className="h-5 w-5 mr-2 text-blue-500" />
+                          Email Address *
+                        </FormLabel>
                         <FormControl>
                           <div className="relative group">
-                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                            <Input className="pl-12 h-12 border-2 border-gray-200 focus:border-blue-500 rounded-xl hover:border-gray-300 transition-all duration-200" type="email" placeholder="Enter your email address" {...field} />
+                            <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 group-focus-within:text-blue-500 transition-all duration-300" />
+                            <Input className="pl-14 h-14 border-2 border-gray-200 focus:border-blue-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" type="email" placeholder="Enter your email address" {...field} />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -283,9 +485,9 @@ Submitted on: ${new Date().toLocaleString()}
                     rules={{ required: "Employee ID is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Employee ID *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700">Employee ID *</FormLabel>
                         <FormControl>
-                          <Input className="h-12 border-2 border-gray-200 focus:border-blue-500 rounded-xl hover:border-gray-300 transition-all duration-200" placeholder="Enter your employee ID" {...field} />
+                          <Input className="h-14 border-2 border-gray-200 focus:border-blue-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Enter your employee ID" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -296,47 +498,50 @@ Submitted on: ${new Date().toLocaleString()}
             </Card>
 
             {/* Event Details Section */}
-            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300 animate-fade-in">
-              <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-100 rounded-t-lg">
-                <CardTitle className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
-                  <div className="p-2 bg-green-500 rounded-lg animate-bounce">
-                    <Calendar className="h-6 w-6 text-white" />
+            <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-lg hover:shadow-3xl transition-all duration-500 animate-fade-in">
+              <CardHeader className="bg-gradient-to-r from-emerald-600 to-green-700 text-white rounded-t-xl">
+                <CardTitle className="text-3xl font-bold flex items-center space-x-4">
+                  <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <Calendar className="h-8 w-8" />
                   </div>
                   <span>Event Details</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8 space-y-8">
+              <CardContent className="p-10 space-y-10">
                 <FormField
                   control={form.control}
                   name="eventName"
                   rules={{ required: "Event name is required" }}
                   render={({ field }) => (
                     <FormItem className="animate-fade-in">
-                      <FormLabel className="text-lg font-semibold text-gray-700">Event Name *</FormLabel>
+                      <FormLabel className="text-xl font-bold text-gray-700">Event Name *</FormLabel>
                       <FormControl>
-                        <Input className="h-12 border-2 border-gray-200 focus:border-green-500 rounded-xl text-lg hover:border-gray-300 transition-all duration-200" placeholder="Enter the event name" {...field} />
+                        <Input className="h-16 border-2 border-gray-200 focus:border-emerald-500 rounded-2xl text-xl hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white font-medium" placeholder="Enter the event name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <FormField
                     control={form.control}
                     name="eventDate"
                     rules={{ required: "Event date is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Event Date *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
+                          <CalendarIcon className="h-5 w-5 mr-2 text-emerald-500" />
+                          Event Date *
+                        </FormLabel>
                         <FormControl>
                           <div className="relative group">
                             <Input 
                               type="date" 
-                              className="h-12 border-2 border-gray-200 focus:border-green-500 rounded-xl text-lg hover:border-gray-300 transition-all duration-200"
+                              className="h-14 border-2 border-gray-200 focus:border-emerald-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white"
                               {...field} 
                             />
-                            <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-green-500 transition-colors" />
+                            <CalendarIcon className="absolute right-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 group-focus-within:text-emerald-500 transition-all duration-300" />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -350,9 +555,9 @@ Submitted on: ${new Date().toLocaleString()}
                     rules={{ required: "Preferred time is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Preferred Time *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700">Preferred Time *</FormLabel>
                         <FormControl>
-                          <Input className="h-12 border-2 border-gray-200 focus:border-green-500 rounded-xl hover:border-gray-300 transition-all duration-200" placeholder="e.g., 10:00 AM - 2:00 PM" {...field} />
+                          <Input className="h-14 border-2 border-gray-200 focus:border-emerald-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="e.g., 10:00 AM - 2:00 PM" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -366,11 +571,11 @@ Submitted on: ${new Date().toLocaleString()}
                   rules={{ required: "Event description is required" }}
                   render={({ field }) => (
                     <FormItem className="animate-fade-in">
-                      <FormLabel className="text-lg font-semibold text-gray-700">Event Description *</FormLabel>
+                      <FormLabel className="text-xl font-bold text-gray-700">Event Description *</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="Provide a detailed description of the event, its objectives, and planned activities"
-                          className="min-h-[120px] border-2 border-gray-200 focus:border-green-500 rounded-xl text-base resize-none hover:border-gray-300 transition-all duration-200"
+                          className="min-h-[150px] border-2 border-gray-200 focus:border-emerald-500 rounded-2xl text-lg resize-none hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white"
                           {...field} 
                         />
                       </FormControl>
@@ -379,18 +584,18 @@ Submitted on: ${new Date().toLocaleString()}
                   )}
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <FormField
                     control={form.control}
                     name="businessImpact"
                     rules={{ required: "Business impact is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Business Impact *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700">Business Impact *</FormLabel>
                         <FormControl>
                           <Textarea 
                             placeholder="Describe how this event will benefit the business"
-                            className="min-h-[100px] border-2 border-gray-200 focus:border-green-500 rounded-xl resize-none hover:border-gray-300 transition-all duration-200"
+                            className="min-h-[120px] border-2 border-gray-200 focus:border-emerald-500 rounded-2xl text-lg resize-none hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white"
                             {...field} 
                           />
                         </FormControl>
@@ -405,11 +610,11 @@ Submitted on: ${new Date().toLocaleString()}
                     rules={{ required: "Employee takeaway is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Employee Takeaway *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700">Employee Takeaway *</FormLabel>
                         <FormControl>
                           <Textarea 
                             placeholder="What will employees gain from this event?"
-                            className="min-h-[100px] border-2 border-gray-200 focus:border-green-500 rounded-xl resize-none hover:border-gray-300 transition-all duration-200"
+                            className="min-h-[120px] border-2 border-gray-200 focus:border-emerald-500 rounded-2xl text-lg resize-none hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white"
                             {...field} 
                           />
                         </FormControl>
@@ -422,28 +627,31 @@ Submitted on: ${new Date().toLocaleString()}
             </Card>
 
             {/* Budget & Logistics Section */}
-            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300 animate-fade-in">
-              <CardHeader className="bg-gradient-to-r from-purple-50 to-violet-100 rounded-t-lg">
-                <CardTitle className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
-                  <div className="p-2 bg-purple-500 rounded-lg animate-bounce">
-                    <DollarSign className="h-6 w-6 text-white" />
+            <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-lg hover:shadow-3xl transition-all duration-500 animate-fade-in">
+              <CardHeader className="bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-t-xl">
+                <CardTitle className="text-3xl font-bold flex items-center space-x-4">
+                  <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <DollarSign className="h-8 w-8" />
                   </div>
                   <span>Budget & Logistics</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+              <CardContent className="p-10">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
                   <FormField
                     control={form.control}
                     name="tentativeBudget"
                     rules={{ required: "Budget information is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Tentative Budget *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
+                          <DollarSign className="h-5 w-5 mr-2 text-purple-500" />
+                          Tentative Budget *
+                        </FormLabel>
                         <FormControl>
                           <div className="relative group">
-                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold group-focus-within:text-purple-500 transition-colors">₹</span>
-                            <Input className="pl-8 h-12 border-2 border-gray-200 focus:border-purple-500 rounded-xl hover:border-gray-300 transition-all duration-200" placeholder="50,000" {...field} />
+                            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-bold text-lg group-focus-within:text-purple-500 transition-all duration-300">₹</span>
+                            <Input className="pl-10 h-14 border-2 border-gray-200 focus:border-purple-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="50,000" {...field} />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -456,11 +664,14 @@ Submitted on: ${new Date().toLocaleString()}
                     name="headCount"
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Expected Attendees</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
+                          <Users className="h-5 w-5 mr-2 text-purple-500" />
+                          Expected Attendees
+                        </FormLabel>
                         <FormControl>
                           <div className="relative group">
-                            <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-purple-500 transition-colors" />
-                            <Input className="pl-12 h-12 border-2 border-gray-200 focus:border-purple-500 rounded-xl hover:border-gray-300 transition-all duration-200" placeholder="Number of attendees" {...field} />
+                            <Users className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 group-focus-within:text-purple-500 transition-all duration-300" />
+                            <Input className="pl-14 h-14 border-2 border-gray-200 focus:border-purple-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Number of attendees" {...field} />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -474,11 +685,14 @@ Submitted on: ${new Date().toLocaleString()}
                     rules={{ required: "Venue preference is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-lg font-semibold text-gray-700">Preferred Venue *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
+                          <MapPin className="h-5 w-5 mr-2 text-purple-500" />
+                          Preferred Venue *
+                        </FormLabel>
                         <FormControl>
                           <div className="relative group">
-                            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-purple-500 transition-colors" />
-                            <Input className="pl-12 h-12 border-2 border-gray-200 focus:border-purple-500 rounded-xl hover:border-gray-300 transition-all duration-200" placeholder="Specify the preferred venue" {...field} />
+                            <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 group-focus-within:text-purple-500 transition-all duration-300" />
+                            <Input className="pl-14 h-14 border-2 border-gray-200 focus:border-purple-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Specify the preferred venue" {...field} />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -492,11 +706,11 @@ Submitted on: ${new Date().toLocaleString()}
                   name="specialArrangements"
                   render={({ field }) => (
                     <FormItem className="animate-fade-in">
-                      <FormLabel className="text-lg font-semibold text-gray-700">Special Arrangements</FormLabel>
+                      <FormLabel className="text-xl font-bold text-gray-700">Special Arrangements</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="Describe any special arrangements needed (catering, AV equipment, accessibility requirements, etc.)"
-                          className="min-h-[100px] border-2 border-gray-200 focus:border-purple-500 rounded-xl resize-none hover:border-gray-300 transition-all duration-200"
+                          className="min-h-[120px] border-2 border-gray-200 focus:border-purple-500 rounded-2xl text-lg resize-none hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white"
                           {...field} 
                         />
                       </FormControl>
@@ -508,36 +722,36 @@ Submitted on: ${new Date().toLocaleString()}
             </Card>
 
             {/* Approval Section */}
-            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300 animate-fade-in">
-              <CardHeader className="bg-gradient-to-r from-orange-50 to-red-100 rounded-t-lg">
-                <CardTitle className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
-                  <div className="p-2 bg-orange-500 rounded-lg animate-bounce">
-                    <Building2 className="h-6 w-6 text-white" />
+            <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-lg hover:shadow-3xl transition-all duration-500 animate-fade-in">
+              <CardHeader className="bg-gradient-to-r from-orange-600 to-red-700 text-white rounded-t-xl">
+                <CardTitle className="text-3xl font-bold flex items-center space-x-4">
+                  <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <Building2 className="h-8 w-8" />
                   </div>
                   <span>Leadership Approval</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8 space-y-8">
+              <CardContent className="p-10 space-y-10">
                 <FormField
                   control={form.control}
                   name="leaderApproval"
                   rules={{ required: "This field is required" }}
                   render={({ field }) => (
-                    <FormItem className="space-y-4 animate-fade-in">
-                      <FormLabel className="text-lg font-semibold text-gray-700">Have you received approval from CIEC Business Unit leader? *</FormLabel>
+                    <FormItem className="space-y-6 animate-fade-in">
+                      <FormLabel className="text-xl font-bold text-gray-700">Have you received approval from CIEC Business Unit leader? *</FormLabel>
                       <FormControl>
                         <RadioGroup
                           value={field.value}
                           onValueChange={field.onChange}
                           className="flex flex-row space-x-8"
                         >
-                          <div className="flex items-center space-x-3 bg-green-50 p-4 rounded-xl border-2 border-green-200 hover:bg-green-100 transition-all duration-200 cursor-pointer">
-                            <RadioGroupItem value="yes" id="yes" className="border-green-500" />
-                            <Label htmlFor="yes" className="text-lg font-medium text-green-700 cursor-pointer">Yes</Label>
+                          <div className="flex items-center space-x-4 bg-green-50 p-6 rounded-2xl border-2 border-green-200 hover:bg-green-100 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+                            <RadioGroupItem value="yes" id="yes" className="border-green-500 w-6 h-6" />
+                            <Label htmlFor="yes" className="text-xl font-bold text-green-700 cursor-pointer">✅ Yes</Label>
                           </div>
-                          <div className="flex items-center space-x-3 bg-red-50 p-4 rounded-xl border-2 border-red-200 hover:bg-red-100 transition-all duration-200 cursor-pointer">
-                            <RadioGroupItem value="no" id="no" className="border-red-500" />
-                            <Label htmlFor="no" className="text-lg font-medium text-red-700 cursor-pointer">No</Label>
+                          <div className="flex items-center space-x-4 bg-red-50 p-6 rounded-2xl border-2 border-red-200 hover:bg-red-100 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+                            <RadioGroupItem value="no" id="no" className="border-red-500 w-6 h-6" />
+                            <Label htmlFor="no" className="text-xl font-bold text-red-700 cursor-pointer">❌ No</Label>
                           </div>
                         </RadioGroup>
                       </FormControl>
@@ -552,11 +766,14 @@ Submitted on: ${new Date().toLocaleString()}
                   rules={{ required: "Approver name is required" }}
                   render={({ field }) => (
                     <FormItem className="animate-fade-in">
-                      <FormLabel className="text-lg font-semibold text-gray-700">CIEC Leader Name *</FormLabel>
+                      <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
+                        <User className="h-5 w-5 mr-2 text-orange-500" />
+                        CIEC Leader Name *
+                      </FormLabel>
                       <FormControl>
                         <div className="relative group">
-                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
-                          <Input className="pl-12 h-12 border-2 border-gray-200 focus:border-orange-500 rounded-xl hover:border-gray-300 transition-all duration-200" placeholder="Enter the leader's name who approved" {...field} />
+                          <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 group-focus-within:text-orange-500 transition-all duration-300" />
+                          <Input className="pl-14 h-14 border-2 border-gray-200 focus:border-orange-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Enter the leader's name who approved" {...field} />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -566,24 +783,25 @@ Submitted on: ${new Date().toLocaleString()}
               </CardContent>
             </Card>
 
-            {/* Submit Button */}
-            <div className="flex justify-center pb-8 animate-fade-in">
+            {/* Enhanced Submit Button */}
+            <div className="flex justify-center pb-12 animate-fade-in">
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-12 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white px-16 py-6 text-xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed min-w-[320px]"
               >
                 {isSubmitting ? (
                   <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
-                    <span>Submitting & Sending Email...</span>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-4 border-white mr-4"></div>
+                    <span>Processing & Sending Email...</span>
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <Send className="h-6 w-6 mr-3" />
+                    <Send className="h-8 w-8 mr-4" />
                     <span>Submit Event Request</span>
                   </div>
                 )}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
               </Button>
             </div>
           </form>
