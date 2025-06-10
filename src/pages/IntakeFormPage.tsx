@@ -19,7 +19,8 @@ interface EventRequestForm {
   requesterEmployeeId: string;
   eventName: string;
   eventDate: string;
-  preferredTime: string;
+  preferredTimeFrom: string;
+  preferredTimeTo: string;
   eventDescription: string;
   businessImpact: string;
   employeeTakeaway: string;
@@ -193,7 +194,8 @@ export default function IntakeFormPage() {
       requesterEmployeeId: "",
       eventName: "",
       eventDate: "",
-      preferredTime: "",
+      preferredTimeFrom: "",
+      preferredTimeTo: "",
       eventDescription: "",
       businessImpact: "",
       employeeTakeaway: "",
@@ -216,7 +218,7 @@ EVENT DETAILS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 Event Name: ${data.eventName}
 📅 Date: ${data.eventDate}
-🕒 Time: ${data.preferredTime}
+🕒 Time: ${data.preferredTimeFrom} - ${data.preferredTimeTo}
 📍 Venue: ${data.venuePreferred}
 💰 Budget: ₹${data.tentativeBudget}
 👥 Expected Attendees: ${data.headCount}
@@ -267,6 +269,7 @@ Event Request Summary
 
 Event: ${submittedData.eventName}
 Date: ${submittedData.eventDate}
+Time: ${submittedData.preferredTimeFrom} - ${submittedData.preferredTimeTo}
 Requester: ${submittedData.requesterName}
 Team: ${submittedData.requesterTeam}
 Budget: ₹${submittedData.tentativeBudget}
@@ -292,7 +295,7 @@ Attendees: ${submittedData.headCount}
   const copyToClipboard = () => {
     if (!submittedData) return;
     
-    const summary = `Event: ${submittedData.eventName} | Date: ${submittedData.eventDate} | Requester: ${submittedData.requesterName}`;
+    const summary = `Event: ${submittedData.eventName} | Date: ${submittedData.eventDate} | Time: ${submittedData.preferredTimeFrom} - ${submittedData.preferredTimeTo} | Requester: ${submittedData.requesterName}`;
     navigator.clipboard.writeText(summary);
     
     toast({
@@ -375,7 +378,7 @@ Attendees: ${submittedData.headCount}
                   <div className="space-y-2 text-sm">
                     <p><span className="font-medium">Name:</span> {submittedData.eventName}</p>
                     <p><span className="font-medium">Date:</span> {submittedData.eventDate}</p>
-                    <p><span className="font-medium">Time:</span> {submittedData.preferredTime}</p>
+                    <p><span className="font-medium">Time:</span> {submittedData.preferredTimeFrom} - {submittedData.preferredTimeTo}</p>
                     <p><span className="font-medium">Venue:</span> {submittedData.venuePreferred}</p>
                   </div>
                 </div>
@@ -533,7 +536,7 @@ Attendees: ${submittedData.headCount}
           
           <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 animate-slide-in-right">
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-2xl font-bold mb-4 flex items-center justify-center">
+              <h2 className="text-2xl font-bold mb-4 flex items-center">
                 <Mail className="h-7 w-7 mr-3" />
                 Comprehensive Event Planning Guidelines
               </h2>
@@ -682,7 +685,7 @@ Attendees: ${submittedData.headCount}
                   )}
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                   <FormField
                     control={form.control}
                     name="eventDate"
@@ -710,13 +713,36 @@ Attendees: ${submittedData.headCount}
 
                   <FormField
                     control={form.control}
-                    name="preferredTime"
-                    rules={{ required: "Preferred time is required" }}
+                    name="preferredTimeFrom"
+                    rules={{ required: "Start time is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
-                        <FormLabel className="text-xl font-bold text-gray-700">Preferred Time *</FormLabel>
+                        <FormLabel className="text-xl font-bold text-gray-700">From Time *</FormLabel>
                         <FormControl>
-                          <Input className="h-14 border-2 border-gray-200 focus:border-emerald-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="e.g., 10:00 AM - 2:00 PM" {...field} />
+                          <Input 
+                            type="time" 
+                            className="h-14 border-2 border-gray-200 focus:border-emerald-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="preferredTimeTo"
+                    rules={{ required: "End time is required" }}
+                    render={({ field }) => (
+                      <FormItem className="animate-fade-in">
+                        <FormLabel className="text-xl font-bold text-gray-700">To Time *</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="time" 
+                            className="h-14 border-2 border-gray-200 focus:border-emerald-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" 
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
