@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { CalendarIcon, ClipboardList, Send, User, Building2, Mail, Calendar, MapPin, DollarSign, Users, CheckCircle2, Download, FileText, MessageSquare, Phone, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -30,11 +31,158 @@ interface EventRequestForm {
   specialArrangements: string;
 }
 
+const venues = [
+  {
+    id: "11-2-cafeteria",
+    name: "11.2 Cafeteria",
+    module: "11.2",
+    floor: "11",
+    seating: 500,
+    avSupport: "Video conf",
+    limitations: "Cafeteria cannot be used between 12:30 - 2:30 pm",
+    suitableFor: "Large events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "dhanuskodi-elliots",
+    name: "Dhanuskodi & Elliots",
+    module: "11.2",
+    floor: "11",
+    seating: 100,
+    avSupport: "Video conf",
+    limitations: "Meeting room",
+    suitableFor: "Learning sessions",
+    comments: "Has to be manually blocked via Room Finder. Both rooms can be separated with a wall"
+  },
+  {
+    id: "training-room",
+    name: "Training Room",
+    module: "11.2",
+    floor: "11",
+    seating: 100,
+    avSupport: "Video conf",
+    limitations: "Training/Yoga room",
+    suitableFor: "Learning sessions/small events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "10-1-cafeteria",
+    name: "10.1 Cafeteria",
+    module: "10.1",
+    floor: "10",
+    seating: 100,
+    avSupport: "Video conf",
+    limitations: "Cafeteria cannot be used between 12:30 – 2:30 pm",
+    suitableFor: "Learning sessions/small events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "10-3-cafeteria",
+    name: "10.3 Cafeteria",
+    module: "10.3",
+    floor: "10",
+    seating: 250,
+    avSupport: "Video conf",
+    limitations: "Cafeteria cannot be used between 12:30 - 2:30 pm",
+    suitableFor: "Large events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "10-5-cafeteria",
+    name: "10.5 Cafeteria",
+    module: "10.5",
+    floor: "10",
+    seating: 500,
+    avSupport: "Video conf",
+    limitations: "Cafeteria cannot be used between 12:30 -2:30 pm",
+    suitableFor: "Large events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "8-3-cafeteria",
+    name: "8.3 Cafeteria",
+    module: "8.3",
+    floor: "8",
+    seating: 500,
+    avSupport: "Video conf",
+    limitations: "Cafeteria cannot be used between 12:30- 2:30 pm. Echo issues",
+    suitableFor: "Large events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "5-6-cafeteria",
+    name: "5.6 Cafeteria",
+    module: "5.6",
+    floor: "5",
+    seating: 500,
+    avSupport: "Video conf",
+    limitations: "Cafeteria cannot be used between 12:30 -2:30 pm",
+    suitableFor: "Large events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "5-4-cafeteria",
+    name: "5.4 Cafeteria",
+    module: "5.4",
+    floor: "5",
+    seating: 100,
+    avSupport: "Video conf",
+    limitations: "Cafeteria cannot be used between 12:30 -2:30 pm",
+    suitableFor: "Learning sessions/Small events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "5-3-cafeteria",
+    name: "5.3 Cafeteria",
+    module: "5.3",
+    floor: "5",
+    seating: 250,
+    avSupport: "Video conf",
+    limitations: "Cafeteria cannot be used between 12:30 – 2:30 pm",
+    suitableFor: "Large events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "4-2-cafeteria",
+    name: "4.2 Cafeteria",
+    module: "4.2",
+    floor: "4",
+    seating: 500,
+    avSupport: "Video conf",
+    limitations: "Cafeteria cannot be used between 12:30 – 2:30 pm",
+    suitableFor: "Large events",
+    comments: "Has to be blocked one week prior to the event"
+  },
+  {
+    id: "poseidon",
+    name: "Poseidon",
+    module: "5.1",
+    floor: "5",
+    seating: 100,
+    avSupport: "Video conf",
+    limitations: "Meeting room",
+    suitableFor: "Learning sessions",
+    comments: "Has to be manually blocked via Room Finder ; Both rooms can be separated with a wall"
+  },
+  {
+    id: "amphitheatre",
+    name: "Amphitheatre",
+    module: "Nil",
+    floor: "1",
+    seating: 1000,
+    avSupport: "Full AV support",
+    limitations: "NIL",
+    suitableFor: "Business sessions/Business Townhalls/Large events",
+    comments: "Has to be blocked one week prior to the event"
+  }
+];
+
 export default function IntakeFormPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedData, setSubmittedData] = useState<EventRequestForm | null>(null);
+  const [selectedVenue, setSelectedVenue] = useState<typeof venues[0] | null>(null);
   const { toast } = useToast();
   
   const form = useForm<EventRequestForm>({
@@ -693,24 +841,105 @@ Attendees: ${submittedData.headCount}
                   <FormField
                     control={form.control}
                     name="venuePreferred"
-                    rules={{ required: "Venue preference is required" }}
+                    rules={{ required: "Venue selection is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
                         <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
                           <MapPin className="h-5 w-5 mr-2 text-purple-500" />
                           Preferred Venue *
                         </FormLabel>
-                        <FormControl>
-                          <div className="relative group">
-                            <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 group-focus-within:text-purple-500 transition-all duration-300" />
-                            <Input className="pl-14 h-14 border-2 border-gray-200 focus:border-purple-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Specify the preferred venue" {...field} />
-                          </div>
-                        </FormControl>
+                        <Select onValueChange={(value) => {
+                          field.onChange(value);
+                          const venue = venues.find(v => v.id === value);
+                          setSelectedVenue(venue || null);
+                        }} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-14 border-2 border-gray-200 focus:border-purple-500 rounded-2xl text-lg hover:border-gray-300 transition-all duration-300 bg-gray-50 focus:bg-white">
+                              <SelectValue placeholder="Select a venue" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="max-h-80 bg-white border-2 border-gray-200 rounded-xl shadow-2xl">
+                            {venues.map((venue) => (
+                              <SelectItem key={venue.id} value={venue.id} className="p-4 hover:bg-purple-50 transition-all duration-300">
+                                <div className="space-y-2">
+                                  <div className="font-semibold text-gray-800">{venue.name}</div>
+                                  <div className="text-sm text-gray-600 space-y-1">
+                                    <div className="flex items-center space-x-4">
+                                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-lg text-xs font-medium">
+                                        Floor {venue.floor}
+                                      </span>
+                                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-lg text-xs font-medium">
+                                        🪑 {venue.seating} seats
+                                      </span>
+                                      <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-lg text-xs font-medium">
+                                        📺 {venue.avSupport}
+                                      </span>
+                                    </div>
+                                    <div className="text-xs text-purple-600 font-medium">
+                                      📋 {venue.suitableFor}
+                                    </div>
+                                    {venue.limitations && venue.limitations !== "NIL" && (
+                                      <div className="text-xs text-red-600">
+                                        ⚠️ {venue.limitations}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
+
+                {/* Venue Details Display */}
+                {selectedVenue && (
+                  <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 animate-fade-in">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="text-lg font-bold text-purple-800 flex items-center">
+                        <MapPin className="h-5 w-5 mr-2" />
+                        Selected Venue Details
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-3">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-semibold text-gray-700">📍 Location:</span>
+                            <span className="text-gray-600">Module {selectedVenue.module}, Floor {selectedVenue.floor}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="font-semibold text-gray-700">🪑 Capacity:</span>
+                            <span className="text-gray-600">{selectedVenue.seating} people</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="font-semibold text-gray-700">🎥 AV Support:</span>
+                            <span className="text-gray-600">{selectedVenue.avSupport}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-start space-x-2">
+                            <span className="font-semibold text-gray-700">✅ Best For:</span>
+                            <span className="text-gray-600">{selectedVenue.suitableFor}</span>
+                          </div>
+                          {selectedVenue.limitations && selectedVenue.limitations !== "NIL" && (
+                            <div className="flex items-start space-x-2">
+                              <span className="font-semibold text-red-700">⚠️ Limitations:</span>
+                              <span className="text-red-600 text-sm">{selectedVenue.limitations}</span>
+                            </div>
+                          )}
+                          <div className="flex items-start space-x-2">
+                            <span className="font-semibold text-gray-700">📝 Note:</span>
+                            <span className="text-gray-600 text-sm">{selectedVenue.comments}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
 
                 <FormField
                   control={form.control}
