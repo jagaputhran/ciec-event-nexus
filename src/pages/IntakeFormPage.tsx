@@ -821,11 +821,12 @@ Attendees: ${submittedData.headCount}
                   <FormField
                     control={form.control}
                     name="headCount"
+                    rules={{ required: "Expected attendees is required" }}
                     render={({ field }) => (
                       <FormItem className="animate-fade-in">
                         <FormLabel className="text-xl font-bold text-gray-700 flex items-center">
                           <Users className="h-5 w-5 mr-2 text-purple-500" />
-                          Expected Attendees
+                          Expected Attendees *
                         </FormLabel>
                         <FormControl>
                           <div className="relative group">
